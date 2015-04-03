@@ -1,12 +1,12 @@
 from captionstransformer import core
-from bs4 import BeautifulSoup
+from BeautifulSoup import BeautifulSoup
 from datetime import datetime, timedelta
 
 
 class Reader(core.Reader):
     def text_to_captions(self):
         soup = BeautifulSoup(self.rawcontent)
-        texts = soup.find_all('text')
+        texts = soup.findAll('text')
         for text in texts:
             caption = core.Caption()
             caption.start = self.get_start(text)
