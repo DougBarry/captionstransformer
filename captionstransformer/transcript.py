@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 class Reader(core.Reader):
     def text_to_captions(self):
-        soup = BeautifulSoup(self.rawcontent)
+        soup = BeautifulSoup(self.rawcontent, convertEntities=BeautifulSoup.HTML_ENTITIES)
         texts = soup.findAll('text')
         for text in texts:
             caption = core.Caption()
@@ -56,3 +56,8 @@ class Writer(core.Writer):
             ustart = u"%s" % start_seconds
 
         return ustart
+
+    def get_template_info(self, caption):
+        info = self.format_time(caption)
+        info['text'] = BeautifulSoup(caption.text, convertEntities=BeautifulSoup.HTML_ENTITIES)
+        return info
