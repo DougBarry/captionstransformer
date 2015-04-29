@@ -36,6 +36,6 @@ class Writer(core.Writer):
         return {'start': caption.start.strftime('%H:%M:%S:%f')[:-3]}
 
     def get_template_info(self, caption):
-        info = super(Writer, self).get_template_info(caption)
-        info['index'] = self.captions.index(caption)
+        info = self.format_time(caption)
+        info['text'] = caption.text.replace("\n", " ")
         return info
