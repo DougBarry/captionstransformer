@@ -41,7 +41,7 @@ class Reader(core.Reader):
 
 class Writer(core.Writer):
     DOCUMENT_TPL = u"%s"
-    CAPTION_TPL = u"""%(index)s\n%(start)s --> %(end)s\n%(text)s\n"""
+    CAPTION_TPL = u"""%(index)s\n%(start)s --> %(end)s\n%(text)s\n\n"""
     tw = TextWrapper()
     tw.width = 35
     
