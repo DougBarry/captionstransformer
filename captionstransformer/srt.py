@@ -1,6 +1,6 @@
 from captionstransformer import core
 from datetime import datetime, timedelta
-
+from textwrap import TextWrapper
 
 class Reader(core.Reader):
     def text_to_captions(self):
@@ -42,7 +42,9 @@ class Reader(core.Reader):
 class Writer(core.Writer):
     DOCUMENT_TPL = u"%s"
     CAPTION_TPL = u"""%(index)s\n%(start)s --> %(end)s\n%(text)s\n"""
-
+    tw = TextWrapper()
+    tw.width = 35
+    
     def format_time(self, caption):
         """Return start and end time for the given format"""
 
@@ -52,5 +54,7 @@ class Writer(core.Writer):
     def get_template_info(self, caption):
         info = super(Writer, self).get_template_info(caption)
         info['index'] = self.captions.index(caption)
+        # Wrap text with line length 35        
+        info['text'] = "\n".join(self.tw.wrap(caption.text))
         return info
 
