@@ -1,6 +1,12 @@
 from datetime import datetime
-from BeautifulSoup import BeautifulSoup
+
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    from BeautifulSoup import BeautifulSoup
+    
 from captionstransformer import core
+from htmlescape import htmlescape
 
 class Reader(core.Reader):
     def text_to_captions(self):
@@ -31,5 +37,5 @@ class Writer(core.Writer):
     
     def get_template_info(self, caption):
         info = self.format_time(caption)
-        info['text'] = BeautifulSoup(caption.text, convertEntities=BeautifulSoup.HTML_ENTITIES)
+        info['text'] = htmlescape(caption.text)
         return info
