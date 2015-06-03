@@ -4,11 +4,15 @@ try:
 except ImportError:
     from BeautifulSoup import BeautifulSoup
 from datetime import datetime, timedelta
+from htmlescape import htmlescape
 
 
 class Reader(core.Reader):
     def text_to_captions(self):
-        soup = BeautifulSoup(self.rawcontent, convertEntities=BeautifulSoup.HTML_ENTITIES)
+        try
+            soup = BeautifulSoup(self.rawcontent,"html.parser")
+        except AttributeError:
+            soup = BeautifulSoup(self.rawcontent,convertEntities=BeautifulSoup.HTML_ENTITIES)
         texts = soup.findAll('text')
         for text in texts:
             caption = core.Caption()

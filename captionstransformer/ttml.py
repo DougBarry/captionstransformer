@@ -10,7 +10,10 @@ from htmlescape import htmlescape
 
 class Reader(core.Reader):
     def text_to_captions(self):
-        soup = BeautifulSoup(self.rawcontent,convertEntities=BeautifulSoup.HTML_ENTITIES)
+        try
+            soup = BeautifulSoup(self.rawcontent,"html.parser")
+        except AttributeError:
+            soup = BeautifulSoup(self.rawcontent,convertEntities=BeautifulSoup.HTML_ENTITIES)
         texts = soup.findAll('p')
         for text in texts:
             caption = core.Caption()
