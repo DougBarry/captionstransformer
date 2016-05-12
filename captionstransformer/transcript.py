@@ -9,7 +9,7 @@ from htmlescape import htmlescape
 
 class Reader(core.Reader):
     def text_to_captions(self):
-        try
+        try:
             soup = BeautifulSoup(self.rawcontent,"html.parser")
         except AttributeError:
             soup = BeautifulSoup(self.rawcontent,convertEntities=BeautifulSoup.HTML_ENTITIES)
