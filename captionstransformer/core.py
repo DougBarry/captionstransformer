@@ -43,6 +43,7 @@ class Writer(object):
     def __init__(self, fobject, captions=None):
         self.fileobject = fobject
         self.captions = []
+        self.encoding = 'utf-8'
         if captions is not None:
             self.captions = captions
 
@@ -56,7 +57,7 @@ class Writer(object):
         if captions is not None:
             self.captions = captions
         value = self.captions_to_text()
-        self.fileobject.write(value)
+        self.fileobject.write(value.encode(self.encoding))
 
     def close(self):
         self.fileobject.close()

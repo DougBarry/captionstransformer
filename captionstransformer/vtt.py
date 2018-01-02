@@ -40,7 +40,7 @@ class Reader(core.Reader):
 
 
 class Writer(core.Writer):
-    DOCUMENT_TPL = u"%s"
+    DOCUMENT_TPL = u"WEBVTT FILE\n\n%s"
     CAPTION_TPL = u"""%(index)s\n%(start)s --> %(end)s\n%(text)s\n\n"""
     tw = TextWrapper()
     tw.width = 35
@@ -48,8 +48,8 @@ class Writer(core.Writer):
     def format_time(self, caption):
         """Return start and end time for the given format"""
 
-        return {'start': caption.start.strftime('%H:%M:%S,%f')[:-3],
-                'end': caption.end.strftime('%H:%M:%S,%f')[:-3]}
+        return {'start': caption.start.strftime('%H:%M:%S.%f')[:-3],
+                'end': caption.end.strftime('%H:%M:%S.%f')[:-3]}
 
     def get_template_info(self, caption):
         info = super(Writer, self).get_template_info(caption)
