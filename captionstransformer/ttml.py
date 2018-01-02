@@ -6,7 +6,7 @@ except ImportError:
     from BeautifulSoup import BeautifulSoup
     
 from captionstransformer import core
-from htmlescape import htmlescape
+from .htmlescape import htmlescape
 
 class Reader(core.Reader):
     def text_to_captions(self):
