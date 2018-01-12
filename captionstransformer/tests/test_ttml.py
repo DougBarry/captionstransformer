@@ -13,9 +13,9 @@ class TestTTMLReader(unittest.TestCase):
         test_content = StringIO(u"""
 <tt xml:lang="" xmlns="http://www.w3.org/ns/ttml"><body><div>
 <p begin="00:00:10" end="00:00:12">Hi, I&#39;m Emily from Nomensa</p>
-<p begin="00:00:12" end="00:00:15">and today I&#39;m going to be talking
+<p begin="00:00:12" end="00:00:15:00">and today I&#39;m going to be talking
 about the order of content on your pages.</p>
-<p begin="00:00:16" end="00:00:22">Making sure the content on your web pages is
+<p begin="00:00:16" end="00:00:22.00">Making sure the content on your web pages is
 presented logically is a really important part of web accessibility.</p>
 <p begin="00:00:23" end="00:00:25">Page content should be ordered so it makes</p>
 </div></body></tt>""")

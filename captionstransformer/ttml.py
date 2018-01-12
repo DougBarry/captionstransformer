@@ -1,3 +1,4 @@
+from os import linesep
 from datetime import datetime
 
 try:
@@ -16,17 +17,51 @@ class Reader(core.Reader):
             soup = BeautifulSoup(self.rawcontent,convertEntities=BeautifulSoup.HTML_ENTITIES)
         texts = soup.findAll('p')
         for text in texts:
+            captiontext = ''
+            for line in text.contents:
+                try:
+                    if line.text == '':
+                        captiontext += linesep
+                    else:
+                        captiontext += line.text
+                except Exception as e:
+                    captiontext += text.text
+                    pass
+
             caption = core.Caption()
             caption.start = self.get_date(text['begin'])
             caption.end = self.get_date(text['end'])
-            caption.text = text.text
+            caption.text = captiontext
             self.add_caption(caption)
 
         return self.captions
 
     def get_date(self, time_str):
-        return datetime.strptime(time_str, '%H:%M:%S.%f')
+        colons = time_str.count(':')
+        dots = time_str.count('.')
 
+        if dots:
+            try:
+                convertedTime = datetime.strptime(time_str, "%H:%M:%S.%f")
+            except ValueError as v:
+                raise v
+
+        if colons == 2:
+            try:
+                convertedTime = datetime.strptime(time_str, '%H:%M:%S')
+            except ValueError as v:
+                raise v
+        elif colons == 3:
+            # bad format...
+            try:
+                convertedTime = datetime.strptime(time_str, '%H:%M:%S:%f')
+            except ValueError as v:
+                raise v
+        else:
+            raise KeyError('Unable to convert datetime: ' + time_str)
+
+        return convertedTime
+        
 class Writer(core.Writer):
     DOCUMENT_TPL = u"""<tt xml:lang="" xmlns="http://www.w3.org/ns/ttml"><body><div>%s</div></body></tt>"""
     CAPTION_TPL = u"""<p begin="%(start)s" end="%(end)s">%(text)s</p>"""

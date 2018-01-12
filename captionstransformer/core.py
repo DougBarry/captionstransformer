@@ -12,7 +12,7 @@ class Reader(object):
         if type(self.rawcontent) == str:
             try:
                 self.rawcontent = self.rawcontent.decode(self.encoding)
-            except AttributeError:
+            except (AttributeError, UnicodeDecodeError) as e:
                 pass
 
         self.text_to_captions()
@@ -66,7 +66,7 @@ class Writer(object):
         text = self.DOCUMENT_TPL
         buffer = u""
         for caption in self.captions:
-            buffer+= self.CAPTION_TPL % self.get_template_info(caption)
+            buffer += self.CAPTION_TPL % self.get_template_info(caption)
         return text % buffer
 
     def format_time(self, caption):
