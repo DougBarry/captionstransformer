@@ -35,6 +35,36 @@ class Reader(object):
         """must be implemented in subclass"""
         pass
 
+    def adapt_time_string(self, time_str):
+
+        colons = time_str.count(':')
+        dots = time_str.count('.')
+        commas = time_str.count(',')
+
+        if commas:
+            try:
+                return datetime.strptime(time_str, "%H:%M:%S,%f")
+            except ValueError as v:
+                raise v
+
+        if dots:
+            try:
+                return datetime.strptime(time_str, "%H:%M:%S.%f")
+            except ValueError as v:
+                raise v
+
+        if colons == 2:
+            try:
+                return datetime.strptime(time_str, '%H:%M:%S')
+            except ValueError as v:
+                raise v
+        elif colons == 3:
+            # bad format...
+            try:
+                return datetime.strptime(time_str, '%H:%M:%S:%f')
+            except ValueError as v:
+                raise v
+
 
 class Writer(object):
     DOCUMENT_TPL = u"%s"
@@ -152,16 +182,17 @@ class Caption(object):
                                self.text)
 
 
-def get_date(hour=0, minute=0, second=0, millisecond=0, microsecond=0):
-    """return a reference date to 1901-01-01 to work with time"""
-    dt = None
-    if second > 59:
-        dt = timedelta(seconds=second)
-        second = 0
-    if millisecond:
-        microsecond += millisecond * 1000
-    date = datetime(year=1900, month=1, day=1, hour=hour, minute=minute,
-                    second=second, microsecond=microsecond)
-    if dt:
-        date += dt
-    return date
+    def get_date_from_delta(self, t_hour=0, t_minute=0, t_second=0, t_millisecond=0, t_microsecond=0):
+        """return a reference date to 1901-01-01 to work with time"""
+        dt = None
+        if t_second > 59:
+            dt = timedelta(seconds=t_second)
+            t_second = 0
+        if t_millisecond:
+            t_microsecond += t_millisecond * 1000
+        date = datetime(year=1900, month=1, day=1, hour=t_hour, minute=t_minute,
+                        second=t_second, microsecond=t_microsecond)
+        if dt:
+            date += dt
+        return date
+

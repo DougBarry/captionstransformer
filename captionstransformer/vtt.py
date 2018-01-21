@@ -1,22 +1,31 @@
+import re
+
 from captionstransformer import core
 from datetime import datetime, timedelta
 from textwrap import TextWrapper
 
+
 class Reader(core.Reader):
+
     def text_to_captions(self):
         caption = core.Caption()
         for line in self.rawcontent.split('\n'):
             stripped_line = line.strip()
+
+            # mark up can appear in vtt... strip it out crudely (this is not foolproof)
+            stripped_line, replacements_count = re.subn('<[^<]+?>', '', stripped_line)
+
             if not stripped_line:
                 continue
             if stripped_line.isdigit():
                 continue
+            if str(stripped_line).lower() == 'webvtt':
+                continue
             start, end = self.get_time(stripped_line)
             if start is not None:
-                #means it is a new caption so start by close previous one
+                # means it is a new caption so start by close previous one
                 if caption.text:
                     self.add_caption(caption)
-
                 caption = core.Caption()
                 caption.start = start
                 caption.end = end
@@ -31,9 +40,13 @@ class Reader(core.Reader):
         parts = line.split(' --> ')
         if len(parts) != 2:
             return None, None
+        # webvtt sometimes puts font alignment/sizing after the end time
+        startpart = parts[0].split(' ')[0]
+        endpart = parts[1].split(' ')[0]
+
         try:
-            start = datetime.strptime(parts[0], '%H:%M:%S,%f')
-            end = datetime.strptime(parts[1], '%H:%M:%S,%f')
+            start = self.adapt_time_string(startpart)
+            end = self.adapt_time_string(endpart)
         except ValueError:
             return None, None
         return start, end

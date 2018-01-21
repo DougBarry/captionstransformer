@@ -12,9 +12,9 @@ from .htmlescape import htmlescape
 class Reader(core.Reader):
     def text_to_captions(self):
         try:
-            soup = BeautifulSoup(self.rawcontent,"html.parser")
+            soup = BeautifulSoup(self.rawcontent, "html.parser")
         except AttributeError:
-            soup = BeautifulSoup(self.rawcontent,convertEntities=BeautifulSoup.HTML_ENTITIES)
+            soup = BeautifulSoup(self.rawcontent, convertEntities=BeautifulSoup.HTML_ENTITIES)
         texts = soup.findAll('p')
         for text in texts:
             captiontext = ''
@@ -29,46 +29,23 @@ class Reader(core.Reader):
                     pass
 
             caption = core.Caption()
-            caption.start = self.get_date(text['begin'])
-            caption.end = self.get_date(text['end'])
+            caption.start = self.get_time(text['begin'])
+            caption.end = self.get_time(text['end'])
             caption.text = captiontext
             self.add_caption(caption)
 
         return self.captions
 
-    def get_date(self, time_str):
-        colons = time_str.count(':')
-        dots = time_str.count('.')
+    def get_time(self, time_str):
+        return self.adapt_time_string(time_str)
 
-        if dots:
-            try:
-                convertedTime = datetime.strptime(time_str, "%H:%M:%S.%f")
-            except ValueError as v:
-                raise v
-
-        if colons == 2:
-            try:
-                convertedTime = datetime.strptime(time_str, '%H:%M:%S')
-            except ValueError as v:
-                raise v
-        elif colons == 3:
-            # bad format...
-            try:
-                convertedTime = datetime.strptime(time_str, '%H:%M:%S:%f')
-            except ValueError as v:
-                raise v
-        else:
-            raise KeyError('Unable to convert datetime: ' + time_str)
-
-        return convertedTime
-        
 class Writer(core.Writer):
     DOCUMENT_TPL = u"""<tt xml:lang="" xmlns="http://www.w3.org/ns/ttml"><body><div>%s</div></body></tt>"""
     CAPTION_TPL = u"""<p begin="%(start)s" end="%(end)s">%(text)s</p>"""
 
     def format_time(self, caption):
         """Return start and end time for the given format"""
-        #should be seconds by default
+        # should be seconds by default
 
         return {'start': caption.start.strftime('%H:%M:%S.%f')[:-3],
                 'end': caption.end.strftime('%H:%M:%S.%f')[:-3]}
